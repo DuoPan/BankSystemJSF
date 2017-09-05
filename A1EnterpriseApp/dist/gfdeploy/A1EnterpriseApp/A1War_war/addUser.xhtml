@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <h:head>
+        <title>Create New User</title>
+    </h:head>
+    <h:body>
+        <h1>Create New User</h1>
+        <h:form id="form1">
+            <b:panelGrid  columns="2" style="padding-top: 5px;padding-left: 20px;padding-right: 20px;">
+                <b:inputText label="User ID" placeholder="Please enter User ID"
+                             value="#{bankTransactionManagedBean.currUser.userId}" 
+                             required="true" requiredMessage="Must input an unique User ID." 
+                             validatorMessage="User ID must greater than 0" >                       
+                    <f:validateLongRange minimum="1"  />
+                </b:inputText>                        
+                <b:inputText label="Last Name" required="true" requiredMessage="Must input Last Name."
+                             placeholder="Please enter last name"
+                             value="#{bankTransactionManagedBean.currUser.lastName}" 
+                             validatorMessage="Only accept letters." >
+                    <f:validateRegex pattern="[a-zA-Z]+"/>
+                </b:inputText>
+                <b:inputText label="First Name" required="true" requiredMessage="Must input First Name."
+                             placeholder="Please enter first name"
+                             value="#{bankTransactionManagedBean.currUser.firstName}" 
+                             validatorMessage="Only accept letters.">
+                    <f:validateRegex pattern="[a-zA-Z]+"/>
+                </b:inputText>
+                <b:inputText label="Email" required="true" requiredMessage="Must input Email." 
+                             placeholder="Please enter email"
+                             value="#{bankTransactionManagedBean.currUser.email}" 
+                             validatorMessage="Wrong email format.">
+                    <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                </b:inputText>
+                <b:inputText label="Password" required="true" requiredMessage="Must input Password." 
+                             placeholder="Please enter password"
+                             value="#{bankTransactionManagedBean.currUser.password}"></b:inputText>             
+                <b:inputText label="Phone Number" required="true" requiredMessage="Must input Phone number."
+                             placeholder="Please enter phone number"
+                             value="#{bankTransactionManagedBean.currUser.phone}"
+                             validatorMessage="8 digits begin with 9 OR 10 digits begin with 0">
+                    <f:validateRegex pattern="^(9\d{7})|(0\d{9})$"/>
+                </b:inputText>              
+                <b:selectOneMenu value="#{bankTransactionManagedBean.currUser.type}" label="Type" required="true" >
+                    <f:selectItem itemLabel="Public" itemValue="Public" />
+                    <f:selectItem itemLabel="Bank Worker" itemValue="Bank Worker" />
+                </b:selectOneMenu>
+                <b:inputTextarea label="Address" required="true" requiredMessage="Must input Address."  
+                                 placeholder="Please enter address"
+                                 value="#{bankTransactionManagedBean.currUser.address}"></b:inputTextarea>
+            </b:panelGrid>
+            <br/>
+            <b:commandButton value="cancel" icon="arrow-left" look="warning" 
+                             action="viewAllUsers" style="margin-left: 10px" immediate="true">
+            </b:commandButton>
+            &#160;&#160;
+            <b:commandButton value="save" icon="saved" look="success"  
+                             action="#{bankTransactionManagedBean.addUser()}" >
+            </b:commandButton>
+        </h:form>
+    </h:body>
+</html>

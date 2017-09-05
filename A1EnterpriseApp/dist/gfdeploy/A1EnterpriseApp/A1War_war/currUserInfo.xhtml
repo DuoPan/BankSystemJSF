@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <h:head>
+        <title>My Info</title>
+    </h:head>
+    <h:body>
+        <h1>My Information</h1>
+        <h:form id="form1">
+            <b:panelGrid  columns="2" style="padding-top: 5px;padding-left: 20px;padding-right: 20px;">
+                <b:inputText label="User ID" onfocus="this.blur()"
+                              value="#{bankTransactionManagedBean.currUser.userId}" ></b:inputText>                        
+                <b:inputText label="Last Name" onfocus="this.blur()"
+                             value="#{bankTransactionManagedBean.currUser.lastName}" ></b:inputText>
+                <b:inputText label="First Name" onfocus="this.blur()"
+                             value="#{bankTransactionManagedBean.currUser.firstName}"></b:inputText>
+                <b:inputText label="Email" onfocus="this.blur()"
+                             value="#{bankTransactionManagedBean.currUser.email}"></b:inputText>
+                <b:inputText label="Password" onfocus="this.blur()"
+                             value="#{bankTransactionManagedBean.currUser.password}"></b:inputText>
+                <b:inputText label="Type" onfocus="this.blur()"
+                             value="#{bankTransactionManagedBean.currUser.type}"></b:inputText>
+                <b:inputText label="Phone Number" onfocus="this.blur()"
+                             value="#{bankTransactionManagedBean.currUser.phone}"></b:inputText>
+                <b:inputText label="Balance" onfocus="this.blur()"
+                             value="#{bankTransactionManagedBean.currUser.balance}"></b:inputText>
+                <b:inputTextarea label="Address" onfocus="this.blur()"
+                                 value="#{bankTransactionManagedBean.currUser.address}"></b:inputTextarea>
+            </b:panelGrid>
+            <br/>
+            <b:commandButton value="back" icon="arrow-left" look="warning" 
+                             action="index" style="margin-left: 10px" immediate="true">
+            </b:commandButton>
+            &#160;&#160;
+            <b:commandButton value="edit" icon="edit" look="primary" 
+                             action="editCurrUserInfo" >
+            </b:commandButton>
+           
+        </h:form>
+    </h:body>
+</html>
