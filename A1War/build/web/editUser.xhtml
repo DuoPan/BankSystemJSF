@@ -45,19 +45,20 @@ and open the template in the editor.
                     <f:validateRegex pattern="^(9\d{7})|(0\d{9})$"/>
                 </b:inputText>              
                 <b:inputText label="Balance" onfocus="this.blur()" 
-                             value="#{bankTransactionManagedBean.currUser.balance}">                  
+                             value="#{bankTransactionManagedBean.currUser.balance}"> 
+                    <f:convertNumber type="currency" currencySymbol="$" />
                 </b:inputText>
                 <b:inputTextarea label="Address" required="true" requiredMessage="Must input Address."  
                                  value="#{bankTransactionManagedBean.currUser.address}"></b:inputTextarea>
             </b:panelGrid>
             <br/>
             <b:commandButton value="back" icon="arrow-left" look="warning" 
-                             action="viewAllUsers" style="margin-left: 10px" immediate="true">        
+                             action="wIndex" style="margin-left: 10px" immediate="true">        
             </b:commandButton>
             &#160;&#160;
             <b:commandButton value="save" icon="saved" look="success" 
                              action="#{bankTransactionManagedBean.currUserInfoSave()}">
-                <f:param name="editfrom" value="other" />
+               
             </b:commandButton>
         </h:form>
     </h:body>

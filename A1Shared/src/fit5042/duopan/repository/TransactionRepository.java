@@ -7,6 +7,7 @@ package fit5042.duopan.repository;
 import fit5042.duopan.repository.entities.*;
 
 import java.util.List;
+import java.util.Set;
 import javax.ejb.Remote;
 
 
@@ -28,6 +29,7 @@ public interface TransactionRepository
     public void addUser(User user) throws Exception;
     public void removeUser(int userId) throws Exception;
     
+    public Set<BankTransaction> searchTransactionsByUser(User user) throws Exception;
     
     public List<BankTransaction> getAllBankTransactions() throws Exception;
     public List<User> getAllUsers() throws Exception;

@@ -48,6 +48,23 @@ and open the template in the editor.
                 <b:label value="Description" tiny-screen="one-fourth" style="font-size: x-large" />
                 <b:inputText placeholder="Please enter Transaction Description"  tiny-screen="one-third" 
                              value="#{bankTransactionManagedBean.currBankTransaction.transactionDes}"/>
+            </b:row> 
+            <b:row style="padding-top:5px;padding-left:10px">               
+                <b:label value="Amount" tiny-screen="one-fourth" style="font-size: x-large"/>
+                <b:inputText placeholder="Please enter amount" tiny-screen="one-third" 
+                             value="#{bankTransactionManagedBean.currBankTransaction.transactionAmount}"
+                             required="true" 
+                             requiredMessage="Must input money amount." 
+                             validatorMessage="Invalid money amount.">
+                    <f:convertNumber type="currency" currencySymbol="$" />                   
+                </b:inputText>
+            </b:row>
+            <b:row style="padding-top:5px;padding-left:10px">               
+                <b:label value="Balance" tiny-screen="one-fourth" style="font-size: x-large"/>
+                <b:inputText onfocus="this.blur()" tiny-screen="one-third" 
+                             value="#{bankTransactionManagedBean.loginUser.balance}">
+                    <f:convertNumber type="currency" currencySymbol="$" />
+                </b:inputText>
             </b:row>
             <br/>
             <b:commandButton value="cancel" icon="arrow-left" look="warning" 

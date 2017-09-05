@@ -11,14 +11,13 @@
         </script>
     </h:head>
     <h:body>  
-        <h1>Transaction Records</h1>
+        <h1>My transaction Records</h1>
         <h:form>
             <b:commandButton value="My Information" look="info" icon="info-sign" 
-                             style="float: right; margin-right: 20px;" action="currUserInfo" 
-                             actionListener="#{bankTransactionManagedBean.currentUser}">
+                             style="float: right; margin-right: 20px;" action="myInfo">
 
             </b:commandButton>
-            <b:commandButton value="create" look="success" icon="plus" 
+            <b:commandButton value="Create" look="success" icon="plus" 
                              style="float: right; margin-right: 20px;" action="addTransaction" >
             </b:commandButton>
             <b:dataTable value="#{bankTransactionManagedBean.bankTransactionList}" 
@@ -27,23 +26,16 @@
                          >
                 <b:dataTableColumn value="#{btlist.transactionNo}" label="No" />
                 <b:dataTableColumn value="#{btlist.transactionName}" label="Name"/>
-
                 <b:dataTableColumn value="#{btlist.transactionType}" label="Type"  />
-
                 <b:dataTableColumn value="#{btlist.transactionDes}" label="Description"/> 
-
+                <b:dataTableColumn value="#{btlist.transactionAmount}" label="Amount"/> 
                 <b:dataTableColumn label="" searchable="false">
-                    <b:commandButton value="edit" icon="edit" look="primary" 
-                                     action="editTransaction" actionListener="#{bankTransactionManagedBean.currentBT}">       
+                    <b:commandButton value="View" icon="info-sign" look="primary" 
+                                     action="detailTransaction" actionListener="#{bankTransactionManagedBean.currentBT}">       
                         <f:attribute name="currBT" value="#{btlist}" />
                     </b:commandButton>
                 </b:dataTableColumn>
-                <b:dataTableColumn label="" searchable="false">
-                    <b:commandButton value="delete" look="danger" icon="remove" 
-                                     action="#{bankTransactionManagedBean.deleteBT(btlist.transactionNo)}" >
-                 
-                    </b:commandButton>            
-                </b:dataTableColumn>
+               
             </b:dataTable>
         </h:form>
     </h:body>

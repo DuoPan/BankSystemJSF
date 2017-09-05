@@ -30,6 +30,7 @@ public class BankTransaction implements Serializable
     private String transactionName;
     private String transactionType;
     private String transactionDes;
+    private float transactionAmount;
     
     private User user;
 
@@ -38,13 +39,16 @@ public class BankTransaction implements Serializable
     }
 
     
-    public BankTransaction(int transactionNo, String transactionName, String transactionType, String transactionDes, User user)
+    public BankTransaction(int transactionNo, String transactionName, 
+            String transactionType, String transactionDes, User user, 
+            float transactionAmount)
     {
         this.transactionNo = transactionNo;
         this.transactionName = transactionName;
         this.transactionType = transactionType;
         this.transactionDes = transactionDes;
         this.user = user;
+        this.transactionAmount = transactionAmount;
     }
 
     @Id
@@ -88,6 +92,18 @@ public class BankTransaction implements Serializable
     {
         this.transactionDes = transactionDes;
     }
+
+    public float getTransactionAmount()
+    {
+        return transactionAmount;
+    }
+
+    public void setTransactionAmount(float amount)
+    {
+        this.transactionAmount = amount;
+    }
+    
+    
 
     @ManyToOne
     public User getUser()

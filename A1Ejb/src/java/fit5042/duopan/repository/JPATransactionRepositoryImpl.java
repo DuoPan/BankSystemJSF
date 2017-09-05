@@ -8,6 +8,8 @@ package fit5042.duopan.repository;
 import fit5042.duopan.repository.entities.BankTransaction;
 import fit5042.duopan.repository.entities.User;
 import java.util.List;
+import java.util.Set;
+import javax.ejb.Stateful;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,7 +18,7 @@ import javax.persistence.PersistenceContext;
  *
  * @author duopan
  */
-@Stateless
+@Stateful
 public class JPATransactionRepositoryImpl implements TransactionRepository
 {
     @PersistenceContext(unitName = "A1EjbPU")
@@ -88,6 +90,16 @@ public class JPATransactionRepositoryImpl implements TransactionRepository
         {
             entityManager.remove(u);               
         }
+    }
+
+    @Override
+    public Set<BankTransaction> searchTransactionsByUser(User user) throws Exception
+    {
+        user = entityManager.find(User.class, user.getUserId());
+        user.getTransactions().size();// can not delete this line
+        entityManager.refresh(user);
+
+        return user.getTransactions();
     }
     
    
