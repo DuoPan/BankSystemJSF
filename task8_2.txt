@@ -1,0 +1,559 @@
+// ejb - JPATransactionRepositoryImpl
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package fit5042.duopan.repository;
+
+import fit5042.duopan.repository.entities.BankTransaction;
+import fit5042.duopan.repository.entities.User;
+import java.util.List;
+import java.util.Set;
+import javax.ejb.Stateful;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+/**
+ *
+ * @author duopan
+ */
+@Stateful
+public class JPATransactionRepositoryImpl implements TransactionRepository
+{
+    @PersistenceContext(unitName = "A1EjbPU")
+    private EntityManager entityManager;
+
+    @Override
+    public List<BankTransaction> getAllBankTransactions() throws Exception
+    {
+        return this.entityManager.createNamedQuery(BankTransaction.GET_ALL_QUERY_NAME).getResultList(); 
+    }
+    
+    @Override
+    public void editTransaction(BankTransaction transaction) throws Exception
+    {
+        entityManager.merge(transaction);
+    }
+
+    @Override
+    public void removeTransaction(int transactionNo) throws Exception
+    {
+        BankTransaction bt = searchTransactionByNo(transactionNo);
+        if (bt != null)
+        {
+            entityManager.remove(bt);               
+        }
+    }
+
+    @Override
+    public void addTransaction(BankTransaction transaction) throws Exception
+    {
+        entityManager.persist(transaction);
+    }
+
+    @Override
+    public BankTransaction searchTransactionByNo(int transactionNo) throws Exception
+    {
+        return entityManager.find(BankTransaction.class, transactionNo);
+    }
+
+    @Override
+    public List<User> getAllUsers() throws Exception
+    {
+        return this.entityManager.createNamedQuery(User.GET_ALL_QUERY_NAME).getResultList();
+    }
+
+    @Override
+    public User searchUserById(int userId) throws Exception
+    {
+        return entityManager.find(User.class, userId);
+    }
+
+    @Override
+    public void editUser(User user) throws Exception
+    {
+        entityManager.merge(user);
+    }
+
+    @Override
+    public void addUser(User user) throws Exception
+    {
+        entityManager.persist(user);
+    }
+
+    @Override
+    public void removeUser(int userId) throws Exception
+    {
+        User u = searchUserById(userId);
+        if (u != null)
+        {
+            entityManager.remove(u);               
+        }
+    }
+
+    @Override
+    public Set<BankTransaction> searchTransactionsByUser(User user) throws Exception
+    {
+        user = entityManager.find(User.class, user.getUserId());
+        user.getTransactions().size();// can not delete this line
+        entityManager.refresh(user);
+
+        return user.getTransactions();
+    }
+    
+   
+}
+
+
+// shared - BankTransactionManagedBean.java
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package fit5042.duopan.repository.mbeans;
+
+import fit5042.duopan.repository.TransactionRepository;
+import fit5042.duopan.repository.entities.BankTransaction;
+import fit5042.duopan.repository.entities.User;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.application.NavigationHandler;
+import javax.faces.bean.ManagedBean;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+
+/**
+ *
+ * @author duopan
+ */
+@ManagedBean(name = "bankTransactionManagedBean")
+@SessionScoped
+public class BankTransactionManagedBean implements Serializable
+{
+    @EJB
+    TransactionRepository transactionRepository;
+    
+    // all users' transaction
+    private List<BankTransaction> bankTransactionList;
+    // one transaction to handle
+    private BankTransaction currBankTransaction;
+    // all users' info
+    private List<User> userList;
+    // one user to handle
+    private User currUser;
+    // handle user's transaction list
+    private List<BankTransaction> currBankTransactionList;
+    // login user information
+    private User loginUser;
+
+    
+    public BankTransactionManagedBean()
+    {
+        // variables must be init
+        bankTransactionList = new ArrayList<>();      
+        currBankTransaction = new BankTransaction();       
+        userList = new ArrayList<>();      
+        currUser = new User();
+        currBankTransactionList = new ArrayList<>();
+        loginUser = new User();
+    }
+    
+    @PostConstruct
+    public void init()
+    {
+        try
+        {
+            bankTransactionList = transactionRepository.getAllBankTransactions();
+            userList = transactionRepository.getAllUsers();
+            loginUser = userList.get(0);
+        } catch (Exception ex)
+        {
+            Logger.getLogger(BankTransactionManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+
+    public List<BankTransaction> getBankTransactionList()
+    {
+        return bankTransactionList;
+    }
+
+    public void setBankTransactionList(List<BankTransaction> bankTransactionList)
+    {
+        this.bankTransactionList = bankTransactionList;
+    }
+
+    public List<User> getUserList()
+    {
+        return userList;
+    }
+
+    public void setUserList(List<User> userList)
+    {
+        this.userList = userList;
+    }
+
+    public User getCurrUser()
+    {
+        return currUser;
+    }
+
+    public void setCurrUser(User currUser)
+    {
+        this.currUser = currUser;
+    }
+
+    public BankTransaction getCurrBankTransaction()
+    {
+        return currBankTransaction;
+    }
+
+    public void setCurrBankTransaction(BankTransaction currBankTransaction)
+    {
+        this.currBankTransaction = currBankTransaction;
+    }
+
+    public User getLoginUser()
+    {
+        return loginUser;
+    }
+
+    public void setLoginUser(User loginUser)
+    {
+        this.loginUser = loginUser;
+    }
+
+    public List<BankTransaction> getCurrBankTransactionList()
+    {
+        return currBankTransactionList;
+    }
+
+    public void setCurrBankTransactionList(List<BankTransaction> currBankTransactionList)
+    {
+        this.currBankTransactionList = currBankTransactionList;
+    }
+
+   
+
+    
+    
+    // transaction CRUD   
+    // do not allow to modify transaction records
+//    public void updateBTL()
+//    {
+//        try
+//        {
+//            transactionRepository.editTransaction(currBankTransaction);
+//            FacesContext.getCurrentInstance().getExternalContext().redirect("index.xhtml");           
+//        } catch (Exception ex)
+//        {
+//            Logger.getLogger(BankTransactionManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
+    
+    public void addBT()
+    {
+        float oldBalance = loginUser.getBalance();
+        try 
+        {
+            if (currBankTransaction.getTransactionAmount() <= 0)
+            {
+                    FacesContext.getCurrentInstance().addMessage("1", new FacesMessage(
+                        FacesMessage.SEVERITY_ERROR, "Money amount must larger than 0.", null));
+                    return;
+            }
+            if (currBankTransaction.getTransactionType().equals("Deposit"))
+            {
+                loginUser.setBalance(loginUser.getBalance() + currBankTransaction.getTransactionAmount());
+            }
+            else if (currBankTransaction.getTransactionType().equals("Withdraw"))
+            {
+                if (currBankTransaction.getTransactionAmount() > loginUser.getBalance())
+                {
+                    FacesContext.getCurrentInstance().addMessage("1", new FacesMessage(
+                        FacesMessage.SEVERITY_ERROR, "Balance is not enough.", null));
+                    return;
+                }
+                loginUser.setBalance(loginUser.getBalance() - currBankTransaction.getTransactionAmount());
+            }
+            else if (currBankTransaction.getTransactionType().equals("Transfer"))
+            {
+                if (currBankTransaction.getTransactionAmount() > loginUser.getBalance())
+                {
+                    FacesContext.getCurrentInstance().addMessage("1", new FacesMessage(
+                        FacesMessage.SEVERITY_ERROR, "Balance is not enough.", null));
+                    return;
+                }
+                loginUser.setBalance(loginUser.getBalance() - currBankTransaction.getTransactionAmount());
+            }
+            else
+            {
+                
+            }
+            currBankTransaction.setUser(loginUser);
+            transactionRepository.addTransaction(currBankTransaction);                    
+        } catch (Exception ex) {
+            FacesContext.getCurrentInstance().addMessage("1", new FacesMessage(
+                FacesMessage.SEVERITY_ERROR, "Transaction ID is already in use.", null));
+            loginUser.setBalance(oldBalance);
+            Logger.getLogger(BankTransactionManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+            return;
+        } 
+        try
+        { 
+            // update balance
+            transactionRepository.editUser(loginUser);
+            FacesContext.getCurrentInstance().getExternalContext().redirect("index.xhtml"); 
+        } catch (Exception ex)
+        {
+            Logger.getLogger(BankTransactionManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    // do not allow to delete transaction records
+//    public void deleteBT(int id)
+//    {
+//        try
+//        {
+//            transactionRepository.removeTransaction(id);
+//            bankTransactionList = transactionRepository.getAllBankTransactions();
+//        } catch (Exception ex)
+//        {
+//            Logger.getLogger(BankTransactionManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
+    
+    
+    
+    // user CRUD
+    
+    public void currUserInfoSave()
+    {
+        try
+        {
+            transactionRepository.editUser(currUser);             
+            FacesContext.getCurrentInstance().getExternalContext().redirect("wIndex.xhtml");           
+        } catch (Exception ex)
+        {
+            
+            Logger.getLogger(BankTransactionManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void loginUserInfoSave()
+    {
+        String type = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("editfrom");
+        try
+        {
+            transactionRepository.editUser(loginUser); 
+            if(type.equals("worker"))
+            {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("wIndex.xhtml"); 
+            }   
+            else{
+                FacesContext.getCurrentInstance().getExternalContext().redirect("index.xhtml"); 
+            }                      
+        } catch (Exception ex)
+        {
+            
+            Logger.getLogger(BankTransactionManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void editSelectedUser(ActionEvent event)
+    {
+        currUser = (User) event.getComponent().getAttributes().get("currSeletedU");
+    }
+    
+    public void deleteUser(int id)
+    {
+        try
+        {
+            transactionRepository.removeUser(id);
+            userList = transactionRepository.getAllUsers();
+        } catch (Exception ex)
+        {
+            Logger.getLogger(BankTransactionManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void addUser()
+    {
+        try {
+            transactionRepository.addUser(currUser);
+            FacesContext.getCurrentInstance().getExternalContext().redirect("wIndex.xhtml");                 
+        } catch (Exception ex) {
+            FacesContext.getCurrentInstance().addMessage("1", new FacesMessage(
+                FacesMessage.SEVERITY_ERROR, "User ID is already in use.", null));
+            Logger.getLogger(BankTransactionManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+    }
+    
+    // others
+    
+    public void currentBT(ActionEvent event)
+    {
+        currBankTransaction = (BankTransaction) event.getComponent().getAttributes().get("currBT");
+    }
+        
+
+
+    // call by bank worker, get a user's transactions
+    public void showOneUserTransactions(ActionEvent event)
+    {
+        int id = (int) event.getComponent().getAttributes().get("uid");
+        try
+        {
+            FacesContext ctx = FacesContext.getCurrentInstance();
+            NavigationHandler nh = ctx.getApplication().getNavigationHandler();
+            nh.handleNavigation(ctx, null, "wOneUserTransactions.xhtml");
+
+            currUser = transactionRepository.searchUserById(id);
+            Set<BankTransaction> temp = transactionRepository.searchTransactionsByUser(currUser);
+            currBankTransactionList.clear();
+            for (BankTransaction next : temp)
+            {
+                currBankTransactionList.add(next);
+            }
+        } catch (Exception ex)
+        {
+            Logger.getLogger(BankTransactionManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+ 
+}
+
+// war - wOneUserTransactions.xhtml
+
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <h:head>
+        <title>Bank System</title>
+        <script>
+
+        </script>
+    </h:head>
+    <h:body>  
+        <h1>Transaction Records<span style="font-size: medium"> User ID: #{bankTransactionManagedBean.currUser.userId}</span></h1>
+        <h:form>
+            <b:dataTable value="#{bankTransactionManagedBean.currBankTransactionList}" 
+                         var="btlist" columnVisibility="true" page-length="10" pageLength="10"
+                         pdf="true" excel="true" print="true" multi-column-search="true" multiColumnSearch="true" 
+                         >
+                <b:dataTableColumn value="#{btlist.transactionNo}" label="No" />
+                <b:dataTableColumn value="#{btlist.transactionName}" label="Name"/>
+                <b:dataTableColumn value="#{btlist.transactionType}" label="Type"  />
+                <b:dataTableColumn value="#{btlist.transactionDes}" label="Description"/> 
+                <b:dataTableColumn value="#{btlist.transactionAmount}" label="Amount"/>
+               
+            </b:dataTable>
+            <br></br>
+            &#160;&#160;
+            <b:commandButton value="back" icon="arrow-left" look="warning" 
+                             action="wIndex" style="margin-left: 10px" immediate="true">             
+            </b:commandButton>
+            
+        </h:form>
+    </h:body>
+</html>
+
+// war - addTrasaction.xhtml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <h:head>
+        <title>Add</title>
+        <script>
+
+        </script>
+    </h:head>
+    <h:body>
+        <h1>Add Transaction</h1>
+        <h:form>
+            <b:row style="padding-left:10px">
+                <b:label value="No." tiny-screen="one-fourth" style="font-size: x-large" />
+                <b:inputText tiny-screen="one-third" placeholder="Please enter Transaction No"
+                             value="#{bankTransactionManagedBean.currBankTransaction.transactionNo}"
+                             required="true" requiredMessage="Must input an unique transaction No." 
+                             validatorMessage="Transaction No must greater than 0" >
+                        
+                    <f:validateLongRange minimum="1"  />
+                </b:inputText>
+            </b:row>
+            <b:row style="padding-top:5px;padding-left:10px">
+                <b:label value="Name" tiny-screen="one-fourth" style="font-size: x-large"/>
+                <b:inputText placeholder="Please enter Transaction Name" tiny-screen="one-third" 
+                             value="#{bankTransactionManagedBean.currBankTransaction.transactionName}" 
+                             required="true" requiredMessage="Must input a transaction name."/> 
+            </b:row>
+            <b:row style="padding-top:5px;padding-left:10px">               
+                <b:label value="Type" tiny-screen="one-fourth" style="font-size: x-large"/>
+                <b:selectOneMenu value="#{bankTransactionManagedBean.currBankTransaction.transactionType}" 
+                                 tiny-screen="one-third">
+                    <f:selectItem itemLabel="Deposit" itemValue="Deposit" />
+                    <f:selectItem itemLabel="Withdraw" itemValue="Withdraw" />
+                    <f:selectItem itemLabel="Transfer" itemValue="Transfer" />
+                    <f:selectItem itemLabel="Other" itemValue="Other" />
+                </b:selectOneMenu>
+            </b:row>
+            <b:row style="padding-top:5px;padding-left:10px">
+                <b:label value="Description" tiny-screen="one-fourth" style="font-size: x-large" />
+                <b:inputText placeholder="Please enter Transaction Description"  tiny-screen="one-third" 
+                             value="#{bankTransactionManagedBean.currBankTransaction.transactionDes}"/>
+            </b:row> 
+            <b:row style="padding-top:5px;padding-left:10px">               
+                <b:label value="Amount" tiny-screen="one-fourth" style="font-size: x-large"/>
+                <b:inputText placeholder="Please enter amount" tiny-screen="one-third" 
+                             value="#{bankTransactionManagedBean.currBankTransaction.transactionAmount}"
+                             required="true" 
+                             requiredMessage="Must input money amount." 
+                             validatorMessage="Invalid money amount.">
+                    <f:convertNumber type="currency" currencySymbol="$" />                   
+                </b:inputText>
+            </b:row>
+            <b:row style="padding-top:5px;padding-left:10px">               
+                <b:label value="Balance" tiny-screen="one-fourth" style="font-size: x-large"/>
+                <b:inputText onfocus="this.blur()" tiny-screen="one-third" 
+                             value="#{bankTransactionManagedBean.loginUser.balance}">
+                    <f:convertNumber type="currency" currencySymbol="$" />
+                </b:inputText>
+            </b:row>
+            <br/>
+            <b:commandButton value="cancel" icon="arrow-left" look="warning" 
+                             action="index" style="margin-left: 10px" immediate="true">
+            </b:commandButton>
+            &#160;&#160;
+            <b:commandButton value="save" icon="saved" look="success"  
+                             action="#{bankTransactionManagedBean.addBT()}" >
+            </b:commandButton>
+
+        </h:form>
+    </h:body>
+</html>

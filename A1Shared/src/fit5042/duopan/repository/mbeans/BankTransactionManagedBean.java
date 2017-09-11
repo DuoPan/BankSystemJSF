@@ -45,8 +45,12 @@ public class BankTransactionManagedBean implements Serializable
     // handle user's transaction list
     private List<BankTransaction> currBankTransactionList;
     // login user information
-    private User loginUser;
+    private static User loginUser;
 
+    // login email blank
+    private String loginEmail;
+    // login password
+    private String loginPsw;
     
     public BankTransactionManagedBean()
     {
@@ -56,7 +60,9 @@ public class BankTransactionManagedBean implements Serializable
         userList = new ArrayList<>();      
         currUser = new User();
         currBankTransactionList = new ArrayList<>();
-        loginUser = new User();
+        //loginUser = new User();
+        loginEmail = "";
+        loginPsw = "";
     }
     
     @PostConstruct
@@ -66,7 +72,7 @@ public class BankTransactionManagedBean implements Serializable
         {
             bankTransactionList = transactionRepository.getAllBankTransactions();
             userList = transactionRepository.getAllUsers();
-            loginUser = userList.get(0);
+            //loginUser = userList.get(0);
         } catch (Exception ex)
         {
             Logger.getLogger(BankTransactionManagedBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -134,6 +140,27 @@ public class BankTransactionManagedBean implements Serializable
         this.currBankTransactionList = currBankTransactionList;
     }
 
+    public void setLoginEmail(String loginEmail)
+    {
+        this.loginEmail = loginEmail;
+    }
+
+    public String getLoginEmail()
+    {
+        return loginEmail;
+    }
+
+    public String getLoginPsw()
+    {
+        return loginPsw;
+    }
+
+    public void setLoginPsw(String loginPsw)
+    {
+        this.loginPsw = loginPsw;
+    }
+
+    
    
 
     
@@ -320,6 +347,46 @@ public class BankTransactionManagedBean implements Serializable
         {
             Logger.getLogger(BankTransactionManagedBean.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public void signIn(String email, String password)
+    {
+        try
+        {
+            for (User u : userList)
+            {
+                if (u.getEmail().equals(email) && u.getPassword().equals(password))
+                {
+                    loginUser = u;
+                    break;
+                }
+            }
+            if(loginUser == null)
+            {
+                FacesContext.getCurrentInstance().addMessage("1", new FacesMessage(
+                    FacesMessage.SEVERITY_ERROR, "Wrong Email or Password!", null));
+            }
+            else
+            {
+                if (loginUser.getType().equals("Public"))
+                {
+                   FacesContext.getCurrentInstance().getExternalContext().redirect("index.xhtml"); 
+                }
+                else
+                {
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("wIndex.xhtml"); 
+                }
+            }
+        } catch (Exception ex)
+        {
+            Logger.getLogger(BankTransactionManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+
+    public void signOut(ActionEvent event)
+    {
+        loginUser = null;
     }
 
  

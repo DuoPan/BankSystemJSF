@@ -29,6 +29,7 @@ public interface TransactionRepository
     public void addUser(User user) throws Exception;
     public void removeUser(int userId) throws Exception;
     
+    
     public Set<BankTransaction> searchTransactionsByUser(User user) throws Exception;
     
     public List<BankTransaction> getAllBankTransactions() throws Exception;

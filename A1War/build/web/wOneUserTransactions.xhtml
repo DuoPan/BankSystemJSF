@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <h:head>
+        <title>Bank System</title>
+        <script>
+
+        </script>
+    </h:head>
+    <h:body>  
+        <h1>Transaction Records<span style="font-size: medium"> User ID: #{bankTransactionManagedBean.currUser.userId}</span></h1>
+        <h:form>
+            <b:dataTable value="#{bankTransactionManagedBean.currBankTransactionList}" 
+                         var="btlist" columnVisibility="true" page-length="10" pageLength="10"
+                         pdf="true" excel="true" print="true" multi-column-search="true" multiColumnSearch="true" 
+                         >
+                <b:dataTableColumn value="#{btlist.transactionNo}" label="No" />
+                <b:dataTableColumn value="#{btlist.transactionName}" label="Name"/>
+                <b:dataTableColumn value="#{btlist.transactionType}" label="Type"  />
+                <b:dataTableColumn value="#{btlist.transactionDes}" label="Description"/> 
+                <b:dataTableColumn value="#{btlist.transactionAmount}" label="Amount"/>
+               
+            </b:dataTable>
+            <br></br>
+            &#160;&#160;
+            <b:commandButton value="back" icon="arrow-left" look="warning" 
+                             action="wIndex" style="margin-left: 10px" immediate="true">             
+            </b:commandButton>
+            
+        </h:form>
+    </h:body>
+</html>
+
