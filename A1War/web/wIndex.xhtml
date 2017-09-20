@@ -34,6 +34,9 @@
             <b:commandButton value="Create" look="success" icon="plus" 
                              style="float: right; margin-right: 20px;" action="addUser" >
             </b:commandButton>
+            <b:commandButton value="All Transactions" look="primary" icon="stats" 
+                             style="float: right; margin-right: 20px;" action="showAllTransactions" >
+            </b:commandButton>
             <b:dataTable value="#{bankTransactionManagedBean.userList}" 
                          var="ulist" columnVisibility="true" page-length="10" pageLength="10"
                          pdf="true" excel="true" print="true" multi-column-search="true" multiColumnSearch="true" 
