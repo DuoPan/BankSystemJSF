@@ -4,6 +4,7 @@
     <jta-data-source>jdbc/myA1V1</jta-data-source>
     <class>fit5042.duopan.repository.entities.User</class>
     <class>fit5042.duopan.repository.entities.BankTransaction</class>
+    <class>fit5042.duopan.repository.entities.TransactionType</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

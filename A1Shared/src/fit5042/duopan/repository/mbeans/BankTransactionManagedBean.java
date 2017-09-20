@@ -7,6 +7,7 @@ package fit5042.duopan.repository.mbeans;
 
 import fit5042.duopan.repository.TransactionRepository;
 import fit5042.duopan.repository.entities.BankTransaction;
+import fit5042.duopan.repository.entities.TransactionType;
 import fit5042.duopan.repository.entities.User;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -57,6 +58,11 @@ public class BankTransactionManagedBean implements Serializable
     // login password
     private String loginPsw;
     
+    // transfer type
+    private List<TransactionType> types;
+    private List<String> typeNames;
+    private String newType;
+    
     public BankTransactionManagedBean()
     {
         // variables must be init
@@ -70,7 +76,9 @@ public class BankTransactionManagedBean implements Serializable
         loginPsw = "";
         transferToUser = "";
         transferToUserNames = new ArrayList<>();
-        
+        types = new ArrayList<>();
+        typeNames = new ArrayList<>();
+        newType = "";
     }
     
     @PostConstruct
@@ -80,6 +88,11 @@ public class BankTransactionManagedBean implements Serializable
         {
             bankTransactionList = transactionRepository.getAllBankTransactions();
             userList = transactionRepository.getAllUsers();
+            types = transactionRepository.getAllTransactionTypes();
+            for(TransactionType tt : types)
+            {
+                typeNames.add(tt.getTypeName());
+            }
             //loginUser = userList.get(0);
             if (loginUser != null)
             {
@@ -207,6 +220,36 @@ public class BankTransactionManagedBean implements Serializable
     public void setTransferToUserNames(List<String> transferToUserNames)
     {
         this.transferToUserNames = transferToUserNames;
+    }
+
+    public List<TransactionType> getTypes()
+    {
+        return types;
+    }
+
+    public void setTypes(List<TransactionType> types)
+    {
+        this.types = types;
+    }
+
+    public List<String> getTypeNames()
+    {
+        return typeNames;
+    }
+
+    public void setTypeNames(List<String> typeNames)
+    {
+        this.typeNames = typeNames;
+    }
+
+    public String getNewType()
+    {
+        return newType;
+    }
+
+    public void setNewType(String newType)
+    {
+        this.newType = newType;
     }
 
     
@@ -462,6 +505,35 @@ public class BankTransactionManagedBean implements Serializable
         loginUser = null;
     }
 
+    public void addTransactionType()
+    {
+        try {
+            System.err.println("newtype"+newType);
+            if (newType.equals(""))
+            {
+                FacesContext.getCurrentInstance().addMessage("1", new FacesMessage(
+                    FacesMessage.SEVERITY_ERROR, "New type can not be empty!", null));
+                return;
+            }
+            int nextId = 1;
+            for (String str : typeNames)
+            {
+                if (str.equals(newType))
+                {
+                    FacesContext.getCurrentInstance().addMessage("1", new FacesMessage(
+                        FacesMessage.SEVERITY_ERROR, "This type is already exist!", null));
+                    return;
+                }
+                nextId++;
+            }
+            transactionRepository.addTransactionType(new TransactionType(nextId, newType));
+            FacesContext.getCurrentInstance().getExternalContext().redirect("wIndex.xhtml");                 
+        } catch (Exception ex) {
+            FacesContext.getCurrentInstance().addMessage("1", new FacesMessage(
+                FacesMessage.SEVERITY_ERROR, "This type is already exist!", null));
+            Logger.getLogger(BankTransactionManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+    }
  
 }
 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <h:head>
+        <title>My Info</title>
+    </h:head>
+    <h:body>
+        <h1>My Information</h1>
+        <h:form id="form1">
+            <b:panelGrid columns="2" style="padding-top: 5px;padding-left: 20px;padding-right: 20px;">
+                <b:inputText label="New Type Name"
+                             value="#{bankTransactionManagedBean.newType}" ></b:inputText>
+          </b:panelGrid>
+            <br/>
+            <b:commandButton value="back" icon="arrow-left" look="warning" 
+                             action="wIndex" style="margin-left: 10px" immediate="true">
+            </b:commandButton>
+            &#160;&#160;
+            <b:commandButton value="save" icon="save" look="success" 
+                            action="#{bankTransactionManagedBean.addTransactionType()}" >
+            </b:commandButton>
+           
+        </h:form>
+    </h:body>
+</html>

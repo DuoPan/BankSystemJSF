@@ -6,8 +6,8 @@
 package fit5042.duopan.repository;
 
 import fit5042.duopan.repository.entities.BankTransaction;
+import fit5042.duopan.repository.entities.TransactionType;
 import fit5042.duopan.repository.entities.User;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateful;
@@ -135,6 +135,18 @@ public class JPATransactionRepositoryImpl implements TransactionRepository
         }
         max++;
         return max;
+    }
+
+    @Override
+    public void addTransactionType(TransactionType transactionType) throws Exception
+    {
+        entityManager.persist(transactionType);
+    }
+
+    @Override
+    public List<TransactionType> getAllTransactionTypes() throws Exception
+    {
+        return this.entityManager.createNamedQuery(TransactionType.GET_ALL_QUERY_NAME).getResultList();
     }
 
     

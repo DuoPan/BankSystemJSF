@@ -37,5 +37,8 @@ public interface TransactionRepository
     
     public int nextAvailableUserId() throws Exception;
     public int nextAvailableTransactionId() throws Exception;
+    
+    public void addTransactionType(TransactionType transactionType) throws Exception;
+    public List<TransactionType> getAllTransactionTypes() throws Exception;
    
 }

@@ -41,10 +41,7 @@ and open the template in the editor.
                 <b:label value="Type" tiny-screen="one-fourth" style="font-size: x-large"/>
                 <b:selectOneMenu value="#{bankTransactionManagedBean.currBankTransaction.transactionType}" 
                                  tiny-screen="one-third" onchange="isTransfer()" id="transferFrom">
-                    <f:selectItem itemLabel="Deposit" itemValue="Deposit" />
-                    <f:selectItem itemLabel="Withdraw" itemValue="Withdraw" />
-                    <f:selectItem itemLabel="Transfer" itemValue="Transfer" />
-                    <f:selectItem itemLabel="Other" itemValue="Other" />
+                    <f:selectItems value="#{bankTransactionManagedBean.typeNames}" var="c" itemValue="#{c}" itemLabel="#{c}"/>
                 </b:selectOneMenu>
             </b:row>          
             <b:row style="padding-top:5px;padding-left:10px">
