@@ -25,7 +25,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "BANK_USER")
 @NamedQueries({
-    @NamedQuery(name = User.GET_ALL_QUERY_NAME, query = "SELECT u FROM User u")})
+    @NamedQuery(name = User.GET_ALL_QUERY_NAME, query = "SELECT u FROM User u WHERE u.del='false'")})
 public class User implements Serializable 
 {
     public static final String GET_ALL_QUERY_NAME = "User.getAll";
@@ -39,6 +39,7 @@ public class User implements Serializable
     private String address;
     private String phone;
     private float balance;
+    private String del; // if delete this user, just hide
 
     private Set<BankTransaction> transactions;
 
@@ -60,6 +61,7 @@ public class User implements Serializable
         this.phone = phone;
         this.balance = balance;
         this.transactions = new HashSet<>();
+        this.del = "false";
     }
 
     @Id
@@ -155,6 +157,16 @@ public class User implements Serializable
     public void setBalance(float balance)
     {
         this.balance = balance;
+    }
+
+    public String getDel()
+    {
+        return del;
+    }
+
+    public void setDel(String del)
+    {
+        this.del = del;
     }
     
     

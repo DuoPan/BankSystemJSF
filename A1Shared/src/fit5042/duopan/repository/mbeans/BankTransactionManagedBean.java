@@ -46,7 +46,12 @@ public class BankTransactionManagedBean implements Serializable
     private List<BankTransaction> currBankTransactionList;
     // login user information
     private static User loginUser;
-
+    
+    private String transferToUser;
+    private List<String> transferToUserNames;
+    private static int nextUserId;
+    private static int nextTransactionNo;
+    
     // login email blank
     private String loginEmail;
     // login password
@@ -63,6 +68,9 @@ public class BankTransactionManagedBean implements Serializable
         //loginUser = new User();
         loginEmail = "";
         loginPsw = "";
+        transferToUser = "";
+        transferToUserNames = new ArrayList<>();
+        
     }
     
     @PostConstruct
@@ -73,6 +81,27 @@ public class BankTransactionManagedBean implements Serializable
             bankTransactionList = transactionRepository.getAllBankTransactions();
             userList = transactionRepository.getAllUsers();
             //loginUser = userList.get(0);
+            if (loginUser != null)
+            {
+                Set<BankTransaction> temp = transactionRepository.searchTransactionsByUser(loginUser);
+                currBankTransactionList.clear();
+                for (BankTransaction next : temp)
+                {
+                    currBankTransactionList.add(next);
+                }
+                for (User u : userList)
+                {
+                    if (u.getUserId() != loginUser.getUserId())
+                    {
+                        transferToUserNames.add(u.getFirstName() + " " + u.getLastName());
+                    }
+                }
+            }
+            else // first time in system
+            {
+                nextTransactionNo = transactionRepository.nextAvailableTransactionId();
+                nextUserId = transactionRepository.nextAvailableUserId();
+            }
         } catch (Exception ex)
         {
             Logger.getLogger(BankTransactionManagedBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -125,10 +154,10 @@ public class BankTransactionManagedBean implements Serializable
         return loginUser;
     }
 
-    public void setLoginUser(User loginUser)
-    {
-        this.loginUser = loginUser;
-    }
+//    public void setLoginUser(User loginUser)
+//    {
+//        this.loginUser = loginUser;
+//    }
 
     public List<BankTransaction> getCurrBankTransactionList()
     {
@@ -158,6 +187,26 @@ public class BankTransactionManagedBean implements Serializable
     public void setLoginPsw(String loginPsw)
     {
         this.loginPsw = loginPsw;
+    }
+
+    public String getTransferToUser()
+    {
+        return transferToUser;
+    }
+
+    public void setTransferToUser(String transferToUser)
+    {
+        this.transferToUser = transferToUser;
+    }
+
+    public List<String> getTransferToUserNames()
+    {
+        return transferToUserNames;
+    }
+
+    public void setTransferToUserNames(List<String> transferToUserNames)
+    {
+        this.transferToUserNames = transferToUserNames;
     }
 
     
@@ -213,13 +262,32 @@ public class BankTransactionManagedBean implements Serializable
                     return;
                 }
                 loginUser.setBalance(loginUser.getBalance() - currBankTransaction.getTransactionAmount());
+                String[] names = transferToUser.split(" ");
+                for (User u : userList)
+                {
+                    if (u.getFirstName().equals(names[0]) && u.getLastName().equals(names[1]))
+                    {
+                      //  int index = u.getUserId();
+                        float exbalance = u.getBalance();System.err.println("fff:"+exbalance);
+                        u.setBalance(exbalance + currBankTransaction.getTransactionAmount());
+                        transactionRepository.editUser(u);// update balance                        
+                     System.err.println("fff2:"+u.getBalance());
+                        BankTransaction bt = new BankTransaction(nextTransactionNo,currBankTransaction.getTransactionName(),
+                                "Transfer To",currBankTransaction.getTransactionDes(),u,currBankTransaction.getTransactionAmount());
+                        transactionRepository.addTransaction(bt); 
+                        nextTransactionNo++;
+                        break;
+                    }
+                }
             }
             else
             {
                 
             }
             currBankTransaction.setUser(loginUser);
-            transactionRepository.addTransaction(currBankTransaction);                    
+            currBankTransaction.setTransactionNo(nextTransactionNo);
+            transactionRepository.addTransaction(currBankTransaction);
+            nextTransactionNo++;
         } catch (Exception ex) {
             FacesContext.getCurrentInstance().addMessage("1", new FacesMessage(
                 FacesMessage.SEVERITY_ERROR, "Transaction ID is already in use.", null));
@@ -297,7 +365,9 @@ public class BankTransactionManagedBean implements Serializable
     {
         try
         {
-            transactionRepository.removeUser(id);
+            currUser = transactionRepository.searchUserById(id);
+            currUser.setDel("true");
+            transactionRepository.editUser(currUser);
             userList = transactionRepository.getAllUsers();
         } catch (Exception ex)
         {
@@ -308,6 +378,9 @@ public class BankTransactionManagedBean implements Serializable
     public void addUser()
     {
         try {
+            currUser.setDel("false");
+            currUser.setUserId(nextUserId);
+            nextUserId++;
             transactionRepository.addUser(currUser);
             FacesContext.getCurrentInstance().getExternalContext().redirect("wIndex.xhtml");                 
         } catch (Exception ex) {
@@ -367,7 +440,7 @@ public class BankTransactionManagedBean implements Serializable
                     FacesMessage.SEVERITY_ERROR, "Wrong Email or Password!", null));
             }
             else
-            {
+            {//currBankTransactionList = transactionRepository.searchTransactionsByUser(loginUser);
                 if (loginUser.getType().equals("Public"))
                 {
                    FacesContext.getCurrentInstance().getExternalContext().redirect("index.xhtml"); 

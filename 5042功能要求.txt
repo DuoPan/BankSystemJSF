@@ -10,14 +10,15 @@ OK public可以增加transaction, 并且立马在user看可以查看到
 OK 用户和交易新增修改  都要验证, amount要不超过balance
 
 OK 用户登录
-用户间转账功能
+OK 用户间转账功能
 
 OK 工作人员可以搜索用户，根据组合属性
+看所有的交易记录
 OK 可以看每个用户的细节
 OK 可以看每个用户的交易记录
-
+记录工作人员的操作
 工作人员可以增加新的交易type，服务器自动体现
 
-create 时候不用输入id
+OK create 时候不用输入id
 
-删除的时候只是hide 有删除提示
+OK 删除user的时候只是hide 有删除提示

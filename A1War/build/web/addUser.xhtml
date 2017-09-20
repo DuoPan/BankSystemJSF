@@ -16,12 +16,7 @@ and open the template in the editor.
         <h1>Create New User</h1>
         <h:form id="form1">
             <b:panelGrid  columns="2" style="padding-top: 5px;padding-left: 20px;padding-right: 20px;">
-                <b:inputText label="User ID" placeholder="Please enter User ID"
-                             value="#{bankTransactionManagedBean.currUser.userId}" 
-                             required="true" requiredMessage="Must input an unique User ID." 
-                             validatorMessage="User ID must greater than 0" >                       
-                    <f:validateLongRange minimum="1"  />
-                </b:inputText>                        
+                                      
                 <b:inputText label="Last Name" required="true" requiredMessage="Must input Last Name."
                              placeholder="Please enter last name"
                              value="#{bankTransactionManagedBean.currUser.lastName}" 

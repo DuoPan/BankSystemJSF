@@ -11,23 +11,26 @@ and open the template in the editor.
       xmlns:h="http://xmlns.jcp.org/jsf/html">
     <h:head>
         <title>Add</title>
-        <script>
-
+        <script type="text/javascript">
+            function isTransfer()
+            {
+                // inspect the id from Chrome
+                var $element = $("select[name$='j_idt7:transferFromInner'] option:selected").val();
+                if($element !== "Transfer")
+                {
+                    $('#transferTo').css('visibility','hidden');                  
+                }
+                else
+                {
+                    $('#transferTo').css('visibility','visible');
+                }
+            }
         </script>
     </h:head>
     <h:body>
         <h1>Add Transaction</h1>
         <h:form>
-            <b:row style="padding-left:10px">
-                <b:label value="No." tiny-screen="one-fourth" style="font-size: x-large" />
-                <b:inputText tiny-screen="one-third" placeholder="Please enter Transaction No"
-                             value="#{bankTransactionManagedBean.currBankTransaction.transactionNo}"
-                             required="true" requiredMessage="Must input an unique transaction No." 
-                             validatorMessage="Transaction No must greater than 0" >
-                        
-                    <f:validateLongRange minimum="1"  />
-                </b:inputText>
-            </b:row>
+     
             <b:row style="padding-top:5px;padding-left:10px">
                 <b:label value="Name" tiny-screen="one-fourth" style="font-size: x-large"/>
                 <b:inputText placeholder="Please enter Transaction Name" tiny-screen="one-third" 
@@ -37,13 +40,13 @@ and open the template in the editor.
             <b:row style="padding-top:5px;padding-left:10px">               
                 <b:label value="Type" tiny-screen="one-fourth" style="font-size: x-large"/>
                 <b:selectOneMenu value="#{bankTransactionManagedBean.currBankTransaction.transactionType}" 
-                                 tiny-screen="one-third">
+                                 tiny-screen="one-third" onchange="isTransfer()" id="transferFrom">
                     <f:selectItem itemLabel="Deposit" itemValue="Deposit" />
                     <f:selectItem itemLabel="Withdraw" itemValue="Withdraw" />
                     <f:selectItem itemLabel="Transfer" itemValue="Transfer" />
                     <f:selectItem itemLabel="Other" itemValue="Other" />
                 </b:selectOneMenu>
-            </b:row>
+            </b:row>          
             <b:row style="padding-top:5px;padding-left:10px">
                 <b:label value="Description" tiny-screen="one-fourth" style="font-size: x-large" />
                 <b:inputText placeholder="Please enter Transaction Description"  tiny-screen="one-third" 
@@ -66,6 +69,17 @@ and open the template in the editor.
                     <f:convertNumber type="currency" currencySymbol="$" />
                 </b:inputText>
             </b:row>
+            <div id="transferTo" style="visibility: hidden">
+            <b:row style="padding-top:5px;padding-left:10px">
+                
+                <b:label value="Transfer To" tiny-screen="one-fourth" style="font-size: x-large"/>
+                <b:selectOneMenu value="#{bankTransactionManagedBean.transferToUser}" 
+                                 tiny-screen="one-third">
+                    <f:selectItems value="#{bankTransactionManagedBean.transferToUserNames}" var="c" itemValue="#{c}" itemLabel="#{c}"/>
+                </b:selectOneMenu>
+                
+            </b:row>
+                </div>
             <br/>
             <b:commandButton value="cancel" icon="arrow-left" look="warning" 
                              action="index" style="margin-left: 10px" immediate="true">

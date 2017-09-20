@@ -35,6 +35,7 @@ public interface TransactionRepository
     public List<BankTransaction> getAllBankTransactions() throws Exception;
     public List<User> getAllUsers() throws Exception;
     
-//    public BankTransaction searchTransactionsByName(String transactionName) throws Exception;
+    public int nextAvailableUserId() throws Exception;
+    public int nextAvailableTransactionId() throws Exception;
    
 }

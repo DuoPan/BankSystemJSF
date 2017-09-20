@@ -7,6 +7,7 @@ package fit5042.duopan.repository;
 
 import fit5042.duopan.repository.entities.BankTransaction;
 import fit5042.duopan.repository.entities.User;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateful;
@@ -58,6 +59,8 @@ public class JPATransactionRepositoryImpl implements TransactionRepository
         return entityManager.find(BankTransaction.class, transactionNo);
     }
 
+    // only attribute "del" is "false" can be get
+    // it means doesn't delete
     @Override
     public List<User> getAllUsers() throws Exception
     {
@@ -102,7 +105,38 @@ public class JPATransactionRepositoryImpl implements TransactionRepository
         return user.getTransactions();
     }
 
- 
+    @Override
+    public int nextAvailableUserId() throws Exception
+    {
+        int max = 1;
+        List<User> users = getAllUsers();
+        for (User u : users)
+        {
+            if (u.getUserId()> max)
+            {
+                max = u.getUserId();
+            }
+        }
+        max++;
+        return max;
+    }
+
+    @Override
+    public int nextAvailableTransactionId() throws Exception
+    {
+        int max = 1;
+        List<BankTransaction> bts = getAllBankTransactions();
+        for (BankTransaction bt : bts)
+        {
+            if (bt.getTransactionNo() > max)
+            {
+                max = bt.getTransactionNo();
+            }
+        }
+        max++;
+        return max;
+    }
+
     
    
 }

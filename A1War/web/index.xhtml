@@ -33,7 +33,7 @@
             <b:commandButton value="Create" look="success" icon="plus" 
                              style="float: right; margin-right: 20px;" action="addTransaction" >
             </b:commandButton>
-            <b:dataTable value="#{bankTransactionManagedBean.bankTransactionList}" 
+            <b:dataTable value="#{bankTransactionManagedBean.currBankTransactionList}" 
                          var="btlist" columnVisibility="true" page-length="10" pageLength="10"
                          pdf="true" excel="true" print="true" multi-column-search="true" multiColumnSearch="true" 
                          >

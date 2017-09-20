@@ -10,7 +10,7 @@
             if(window.name === "")
             {
                 var a = '#{bankTransactionManagedBean.loginUser.firstName}';
-                alert("Welcome Public User: "+a);
+                alert("Welcome Bank Worker: "+a);
                 window.name="Bank Worker";
             } 
             
@@ -22,6 +22,7 @@
     </h:head>
     <h:body>  
         <h:form>
+            
         <h1>All User Records <span style="float: right"><b:commandButton look="link" value="Sign Out" 
                                                                   actionListener="#{bankTransactionManagedBean.signOut}" 
                                                                   action="login" onclick="clearWinName()" /></span></h1>
@@ -53,13 +54,14 @@
                     </b:commandButton>
                 </b:dataTableColumn>
                 <b:dataTableColumn label="" searchable="false">
-                    <b:commandButton value="Delete" look="danger" icon="remove" 
+                    <b:commandButton value="Delete" look="danger" icon="remove"                                     
+                                     onclick="return confirm('Are you sure?')" 
                                      action="#{bankTransactionManagedBean.deleteUser(ulist.userId)}">                 
                     </b:commandButton>            
                 </b:dataTableColumn>
                 <b:dataTableColumn label="" searchable="false">
                     <b:commandButton value="Transactions" icon="info-sign" look="info"            
-                                     actionListener="#{bankTransactionManagedBean.showOneUserTransactions}">       
+                                     actionListener="#{bankTransactionManagedBean.showOneUserTransactions}">   
                         <f:attribute name="uid" value="#{ulist.userId}" />
                     </b:commandButton>
                 </b:dataTableColumn>
