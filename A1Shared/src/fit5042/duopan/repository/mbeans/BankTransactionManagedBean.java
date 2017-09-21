@@ -508,7 +508,6 @@ public class BankTransactionManagedBean implements Serializable
     public void addTransactionType()
     {
         try {
-            System.err.println("newtype"+newType);
             if (newType.equals(""))
             {
                 FacesContext.getCurrentInstance().addMessage("1", new FacesMessage(

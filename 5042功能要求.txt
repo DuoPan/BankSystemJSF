@@ -1,15 +1,15 @@
 5042功能要求
 
-OK public用户可以按照各种属性搜索
-OK 可以看到自己的信息，可以修改
+OK public用户可以按照各种属性搜索  OK
+OK 可以看到自己的信息，可以修改  OK
 OK 可以view transaction细节，比如列表没有全显示的时候
-OK 搜索结果以表格显示
+OK 搜索结果以表格显示   OK
 OK 可以选择显示哪些属性
 OK bank workers 可以看增删改 user
 OK public可以增加transaction, 并且立马在user看可以查看到
 OK 用户和交易新增修改  都要验证, amount要不超过balance
 
-OK 用户登录
+OK 用户登录   OK
 OK 用户间转账功能
 
 OK 工作人员可以搜索用户，根据组合属性
@@ -17,6 +17,7 @@ OK 看所有的交易记录
 OK 可以看每个用户的细节
 OK 可以看每个用户的交易记录
 记录工作人员的操作
+OK 需要validation
 OK 工作人员可以增加新的交易type，服务器自动体现
 
 OK create 时候不用输入id
