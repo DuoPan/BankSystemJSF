@@ -215,7 +215,7 @@ public class MyInfo extends javax.swing.JFrame
         BankSystem.getInstance().getLoginUser().setPhone(jTextFieldPhone.getText());
         BankSystem.getInstance().getLoginUser().setType(jComboBoxType.getSelectedItem().toString());
         
-        BankSystem.getInstance().updateMyInfo();
+        BankSystem.getInstance().updateInfo();
         
         JOptionPane.showMessageDialog(null, "Update Successfully!", "Waring", JOptionPane.INFORMATION_MESSAGE);
             

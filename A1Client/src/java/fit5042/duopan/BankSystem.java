@@ -36,6 +36,9 @@ public class BankSystem
     private List<TransactionType> types;
     // login user information
     private User loginUser;
+    private int nextTransactionNo;
+    private int nextUserId;
+    
     
     private static BankSystem instance;
     
@@ -64,6 +67,8 @@ public class BankSystem
             bankTransactionList = transactionRepository.getAllBankTransactions();
             userList = transactionRepository.getAllUsers();
             types = transactionRepository.getAllTransactionTypes();
+            nextTransactionNo = transactionRepository.nextAvailableTransactionId();
+            nextUserId = transactionRepository.nextAvailableUserId();
         } catch (Exception ex)
         {
             Logger.getLogger(BankSystem.class.getName()).log(Level.SEVERE, null, ex);
@@ -137,6 +142,27 @@ public class BankSystem
     {
         this.loginUser = loginUser;
     }
+
+    public int getNextTransactionNo()
+    {
+        return nextTransactionNo;
+    }
+
+    public void setNextTransactionNo(int nextTransactionNo)
+    {
+        this.nextTransactionNo = nextTransactionNo;
+    }
+
+    public int getNextUserId()
+    {
+        return nextUserId;
+    }
+
+    public void setNextUserId(int nextUserId)
+    {
+        this.nextUserId = nextUserId;
+    }
+    
     
     
     
@@ -261,9 +287,9 @@ public class BankSystem
         
     }
     
-    public void updateMyInfo()
+    public void updateInfo()
     {
-        try 
+        try
         {
             transactionRepository.editUser(loginUser);
             reload();
@@ -273,6 +299,27 @@ public class BankSystem
         }
     }
     
+    public void updateInfo(User u)
+    {
+        try
+        {
+            transactionRepository.editUser(u);// do not reload here
+        } catch (Exception ex)
+        {
+            Logger.getLogger(BankSystem.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void addTransaction(BankTransaction bt)
+    {
+        try
+        {
+            transactionRepository.addTransaction(bt); 
+        } catch (Exception ex)
+        {
+            Logger.getLogger(BankSystem.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     /**
      * @param args the command line arguments

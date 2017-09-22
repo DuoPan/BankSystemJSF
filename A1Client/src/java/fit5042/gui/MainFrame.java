@@ -140,9 +140,10 @@ public class MainFrame extends javax.swing.JFrame
         jTextFieldSearchDes = new javax.swing.JTextField();
         jButtonMulSearch = new javax.swing.JButton();
         jButtonClear = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        jButtonCreate = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Main Page");
 
         jLabelWel.setText("Welcome Public User:");
 
@@ -217,7 +218,14 @@ public class MainFrame extends javax.swing.JFrame
             }
         });
 
-        jButton1.setText("Create");
+        jButtonCreate.setText("Create");
+        jButtonCreate.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButtonCreateActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -252,7 +260,7 @@ public class MainFrame extends javax.swing.JFrame
                 .addGap(108, 108, 108)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButtonMyInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jButtonCreate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -271,7 +279,7 @@ public class MainFrame extends javax.swing.JFrame
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButtonMyInfo)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)))
+                        .addComponent(jButtonCreate)))
                 .addGap(12, 12, 12)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -320,11 +328,18 @@ public class MainFrame extends javax.swing.JFrame
         BankSystem.getInstance().showMulSearchSelfTransaction(tableModel,array);
     }//GEN-LAST:event_jButtonMulSearchActionPerformed
 
+    private void jButtonCreateActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonCreateActionPerformed
+    {//GEN-HEADEREND:event_jButtonCreateActionPerformed
+        CreateTransForm cf = new CreateTransForm();
+        cf.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonCreateActionPerformed
+
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButtonClear;
+    private javax.swing.JButton jButtonCreate;
     private javax.swing.JButton jButtonMulSearch;
     private javax.swing.JButton jButtonMyInfo;
     private javax.swing.JLabel jLabelAllTrans;

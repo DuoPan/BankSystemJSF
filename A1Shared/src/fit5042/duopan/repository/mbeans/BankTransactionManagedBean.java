@@ -310,11 +310,10 @@ public class BankTransactionManagedBean implements Serializable
                 {
                     if (u.getFirstName().equals(names[0]) && u.getLastName().equals(names[1]))
                     {
-                      //  int index = u.getUserId();
-                        float exbalance = u.getBalance();System.err.println("fff:"+exbalance);
+                        float exbalance = u.getBalance();
                         u.setBalance(exbalance + currBankTransaction.getTransactionAmount());
                         transactionRepository.editUser(u);// update balance                        
-                     System.err.println("fff2:"+u.getBalance());
+         
                         BankTransaction bt = new BankTransaction(nextTransactionNo,currBankTransaction.getTransactionName(),
                                 "Transfer To",currBankTransaction.getTransactionDes(),u,currBankTransaction.getTransactionAmount());
                         transactionRepository.addTransaction(bt); 

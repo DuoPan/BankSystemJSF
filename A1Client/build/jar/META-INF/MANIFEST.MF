@@ -3,4 +3,6 @@ Ant-Version: Apache Ant 1.9.7
 Created-By: 1.8.0_121-b13 (Oracle Corporation)
 X-COMMENT: Main-Class will be added automatically by build
 Main-Class: fit5042.duopan.BankSystem
+Class-Path: A1Shared.jar lib/A1Shared.jar AbsoluteLayout.jar lib/Absol
+ uteLayout.jar 
 
