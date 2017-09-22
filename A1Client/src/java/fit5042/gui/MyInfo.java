@@ -50,8 +50,16 @@ public class MyInfo extends javax.swing.JFrame
 
     private void backToMainPage()
     {
-        MainFrame mainFrame = new MainFrame();
-        mainFrame.setVisible(true);
+        if (jComboBoxType.getSelectedIndex() == 0)
+        {
+            MainFrame mainFrame = new MainFrame();
+            mainFrame.setVisible(true);
+        }
+        else
+        {
+            AdminFrame adFrame = new AdminFrame();
+            adFrame.setVisible(true);
+        }
         this.dispose();
     }
     
@@ -215,7 +223,7 @@ public class MyInfo extends javax.swing.JFrame
         BankSystem.getInstance().getLoginUser().setPhone(jTextFieldPhone.getText());
         BankSystem.getInstance().getLoginUser().setType(jComboBoxType.getSelectedItem().toString());
         
-        BankSystem.getInstance().updateInfo();
+        BankSystem.getInstance().updateInfo(0);
         
         JOptionPane.showMessageDialog(null, "Update Successfully!", "Waring", JOptionPane.INFORMATION_MESSAGE);
             

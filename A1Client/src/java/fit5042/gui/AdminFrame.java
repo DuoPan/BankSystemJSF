@@ -5,21 +5,119 @@
  */
 package fit5042.gui;
 
+import fit5042.duopan.BankSystem;
+import fit5042.duopan.repository.entities.User;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.RowSorter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+
 /**
  *
  * @author duopan
  */
 public class AdminFrame extends javax.swing.JFrame
 {
-
+    DefaultTableModel tableModel;
+    private TableRowSorter<TableModel> rowSorter;
+    
+    
+    
     /**
      * Creates new form AdminFrame
      */
     public AdminFrame()
     {
         initComponents();
+        setClose();
+        initView();
     }
 
+    private void setClose()
+    {
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter()
+        {
+            @Override
+            public void windowClosing(WindowEvent e)
+            {
+                int result = JOptionPane.showConfirmDialog(null, "Log out?", "Warning", JOptionPane.OK_CANCEL_OPTION);
+                if (result == JOptionPane.OK_OPTION)
+                {
+                    logout();
+                }
+            }
+        });
+    }
+     
+    private void logout()
+    {
+        LoginFrame loginFrame = new LoginFrame();
+        loginFrame.setVisible(true);
+        this.dispose();
+        BankSystem.getInstance().logout();
+    }
+    
+    private void initView()
+    {
+        jLabelWel.setText(jLabelWel.getText() + " " + BankSystem.getInstance().getLoginUser().getFirstName() 
+                + " " + BankSystem.getInstance().getLoginUser().getLastName());
+        
+        tableModel = (DefaultTableModel) jTableAll.getModel();
+        RowSorter<TableModel> sorter = new TableRowSorter<>(jTableAll.getModel());  
+        jTableAll.setRowSorter(sorter);
+        
+        tableModel.setRowCount(0);
+        BankSystem.getInstance().showAllUsersInfo(tableModel);
+        
+        rowSorter = new TableRowSorter<>(jTableAll.getModel());
+        jTableAll.setRowSorter(rowSorter);
+        
+        // Search From All Columns Dynamicly
+        jtfFilter.getDocument().addDocumentListener(new DocumentListener()
+        {        
+            @Override
+            public void insertUpdate(DocumentEvent e)
+            {
+                String text = jtfFilter.getText();
+                if (text.trim().length() == 0) {
+                    rowSorter.setRowFilter(null);
+                } else {
+                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) 
+            {
+                String text = jtfFilter.getText();
+
+                if (text.trim().length() == 0) {
+                    rowSorter.setRowFilter(null);
+                } else {
+                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) 
+            {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+        });
+
+    }
+     
+     
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -30,25 +128,395 @@ public class AdminFrame extends javax.swing.JFrame
     private void initComponents()
     {
 
+        jLabelWel = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTableAll = new javax.swing.JTable();
+        jtfFilter = new javax.swing.JTextField();
+        jButtonMyInfo = new javax.swing.JButton();
+        jButtonEdit = new javax.swing.JButton();
+        jButtonDetail = new javax.swing.JButton();
+        jButtonDelete = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        jButtonAllTrans = new javax.swing.JButton();
+        jButtonCreateUser = new javax.swing.JButton();
+        jButtonAddType = new javax.swing.JButton();
+        jTextField1 = new javax.swing.JTextField();
+        jTextField2 = new javax.swing.JTextField();
+        jTextField3 = new javax.swing.JTextField();
+        jTextField4 = new javax.swing.JTextField();
+        jTextField5 = new javax.swing.JTextField();
+        jTextField6 = new javax.swing.JTextField();
+        jTextField7 = new javax.swing.JTextField();
+        jTextField8 = new javax.swing.JTextField();
+        jTextField9 = new javax.swing.JTextField();
+        jButtonAdvSearch = new javax.swing.JButton();
+        jButtonClear = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Main Page");
+
+        jLabelWel.setText("Welcome Bank Worker: ");
+
+        jLabel2.setText("All Users Information            Search");
+
+        jTableAll.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][]
+            {
+
+            },
+            new String []
+            {
+                "ID", "Last Name", "First Name", "Email", "Password", "Type", "Address", "Phone", "Balance"
+            }
+        )
+        {
+            Class[] types = new Class []
+            {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Float.class
+            };
+            boolean[] canEdit = new boolean []
+            {
+                false, false, false, false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex)
+            {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex)
+            {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(jTableAll);
+
+        jButtonMyInfo.setText("My Information");
+        jButtonMyInfo.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButtonMyInfoActionPerformed(evt);
+            }
+        });
+
+        jButtonEdit.setText("Edit");
+        jButtonEdit.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButtonEditActionPerformed(evt);
+            }
+        });
+
+        jButtonDetail.setText("Detail");
+        jButtonDetail.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButtonDetailActionPerformed(evt);
+            }
+        });
+
+        jButtonDelete.setText("Delete");
+        jButtonDelete.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButtonDeleteActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("One User Operation");
+
+        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
+
+        jButtonAllTrans.setText("All Transactions");
+        jButtonAllTrans.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButtonAllTransActionPerformed(evt);
+            }
+        });
+
+        jButtonCreateUser.setText("Create User");
+        jButtonCreateUser.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButtonCreateUserActionPerformed(evt);
+            }
+        });
+
+        jButtonAddType.setText("Add Type");
+        jButtonAddType.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButtonAddTypeActionPerformed(evt);
+            }
+        });
+
+        jTextField1.setToolTipText("");
+
+        jButtonAdvSearch.setText("Multiple Search");
+        jButtonAdvSearch.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButtonAdvSearchActionPerformed(evt);
+            }
+        });
+
+        jButtonClear.setText("Clear");
+        jButtonClear.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButtonClearActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabelWel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jtfFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jButtonAllTrans))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButtonDetail)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButtonEdit)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButtonDelete))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButtonCreateUser)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButtonAddType)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButtonMyInfo)))
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButtonAdvSearch)
+                                .addGap(50, 50, 50)
+                                .addComponent(jButtonClear, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField9))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelWel)
+                    .addComponent(jButtonMyInfo)
+                    .addComponent(jButtonAllTrans)
+                    .addComponent(jButtonCreateUser)
+                    .addComponent(jButtonAddType))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2)
+                        .addComponent(jtfFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButtonEdit)
+                        .addComponent(jButtonDetail)
+                        .addComponent(jButtonDelete)
+                        .addComponent(jLabel1))
+                    .addComponent(jSeparator1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonAdvSearch)
+                    .addComponent(jButtonClear)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButtonMyInfoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonMyInfoActionPerformed
+    {//GEN-HEADEREND:event_jButtonMyInfoActionPerformed
+        MyInfo myInfo = new MyInfo();
+        myInfo.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonMyInfoActionPerformed
+
+    private void jButtonDetailActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonDetailActionPerformed
+    {//GEN-HEADEREND:event_jButtonDetailActionPerformed
+        if (jTableAll.getSelectedRowCount() != 1)
+        {
+            JOptionPane.showMessageDialog(null, "Please select only one row first!", "Waring", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        int id = (int)jTableAll.getValueAt(jTableAll.getSelectedRow(), 0);
+        BankSystem.getInstance().setCurrUserAndTrans(id);
+        OneUserTransFrame o = new OneUserTransFrame();
+        o.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonDetailActionPerformed
+
+    private void jButtonEditActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonEditActionPerformed
+    {//GEN-HEADEREND:event_jButtonEditActionPerformed
+        if (jTableAll.getSelectedRowCount() != 1)
+        {
+            JOptionPane.showMessageDialog(null, "Please select only one row first!", "Waring", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        int id = (int)jTableAll.getValueAt(jTableAll.getSelectedRow(), 0);
+        BankSystem.getInstance().setCurrUserAndTrans(id);
+        OneUserInfoFrame o = new OneUserInfoFrame();
+        o.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonEditActionPerformed
+
+    private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonDeleteActionPerformed
+    {//GEN-HEADEREND:event_jButtonDeleteActionPerformed
+        if (jTableAll.getSelectedRowCount() != 1)
+        {
+            JOptionPane.showMessageDialog(null, "Please select only one row first!", "Waring", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        int id = (int)jTableAll.getValueAt(jTableAll.getSelectedRow(), 0);
+        BankSystem.getInstance().setCurrUserAndTrans(id);
+        int result = JOptionPane.showConfirmDialog(null, "DELETE: Are you sure?", "Warning", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION)
+        {
+            BankSystem.getInstance().getCurrUser().setDel("true");
+            BankSystem.getInstance().updateInfo(1);
+            BankSystem.getInstance().reload(); 
+            tableModel.setRowCount(0);
+            BankSystem.getInstance().showAllUsersInfo(tableModel);
+        }
+    }//GEN-LAST:event_jButtonDeleteActionPerformed
+
+    private void jButtonAllTransActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonAllTransActionPerformed
+    {//GEN-HEADEREND:event_jButtonAllTransActionPerformed
+        AllUserTransFrame a = new AllUserTransFrame();
+        a.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonAllTransActionPerformed
+
+    private void jButtonCreateUserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonCreateUserActionPerformed
+    {//GEN-HEADEREND:event_jButtonCreateUserActionPerformed
+        AddUserForm a = new AddUserForm();
+        a.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonCreateUserActionPerformed
+
+    private void jButtonAddTypeActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonAddTypeActionPerformed
+    {//GEN-HEADEREND:event_jButtonAddTypeActionPerformed
+        AddTypeFrame a = new AddTypeFrame();
+        a.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonAddTypeActionPerformed
+
+    private void jButtonClearActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonClearActionPerformed
+    {//GEN-HEADEREND:event_jButtonClearActionPerformed
+        jTextField1.setText("");
+        jTextField2.setText("");
+        jTextField3.setText("");
+        jTextField4.setText("");
+        jTextField5.setText("");
+        jTextField6.setText("");
+        jTextField7.setText("");
+        jTextField8.setText("");
+        jTextField9.setText("");
+        tableModel.setRowCount(0);
+        BankSystem.getInstance().showAllUsersInfo(tableModel);
+    }//GEN-LAST:event_jButtonClearActionPerformed
+
+    private void jButtonAdvSearchActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonAdvSearchActionPerformed
+    {//GEN-HEADEREND:event_jButtonAdvSearchActionPerformed
+        ArrayList<String> array = new ArrayList<>();
+        array.add(jTextField1.getText());
+        array.add(jTextField2.getText());
+        array.add(jTextField3.getText());
+        array.add(jTextField4.getText());
+        array.add(jTextField5.getText());
+        array.add(jTextField6.getText());
+        array.add(jTextField7.getText());
+        array.add(jTextField8.getText());
+        array.add(jTextField9.getText());
+        tableModel.setRowCount(0);
+        BankSystem.getInstance().showMulSearchUser(tableModel,array);
+    }//GEN-LAST:event_jButtonAdvSearchActionPerformed
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonAddType;
+    private javax.swing.JButton jButtonAdvSearch;
+    private javax.swing.JButton jButtonAllTrans;
+    private javax.swing.JButton jButtonClear;
+    private javax.swing.JButton jButtonCreateUser;
+    private javax.swing.JButton jButtonDelete;
+    private javax.swing.JButton jButtonDetail;
+    private javax.swing.JButton jButtonEdit;
+    private javax.swing.JButton jButtonMyInfo;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabelWel;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JTable jTableAll;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField jTextField5;
+    private javax.swing.JTextField jTextField6;
+    private javax.swing.JTextField jTextField7;
+    private javax.swing.JTextField jTextField8;
+    private javax.swing.JTextField jTextField9;
+    private javax.swing.JTextField jtfFilter;
     // End of variables declaration//GEN-END:variables
 }

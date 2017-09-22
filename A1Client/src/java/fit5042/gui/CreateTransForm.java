@@ -302,7 +302,7 @@ public class CreateTransForm extends javax.swing.JFrame
                 BankSystem.getInstance().getLoginUser(), amount);
         BankSystem.getInstance().addTransaction(bt);
         BankSystem.getInstance().setNextTransactionNo(BankSystem.getInstance().getNextTransactionNo() + 1);
-        BankSystem.getInstance().updateInfo();      
+        BankSystem.getInstance().updateInfo(0);      
         
         JOptionPane.showMessageDialog(null, "Create Transaction Successfully!", "Waring", JOptionPane.INFORMATION_MESSAGE);
         backToMainPage();

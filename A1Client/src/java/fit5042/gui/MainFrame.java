@@ -325,7 +325,7 @@ public class MainFrame extends javax.swing.JFrame
         array.add(jTextFieldSearchDes.getText());
         array.add(jTextFieldSearchAmount.getText());
         tableModel.setRowCount(0);
-        BankSystem.getInstance().showMulSearchSelfTransaction(tableModel,array);
+        BankSystem.getInstance().showMulSearchSelfTransaction(tableModel,array,0);
     }//GEN-LAST:event_jButtonMulSearchActionPerformed
 
     private void jButtonCreateActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonCreateActionPerformed

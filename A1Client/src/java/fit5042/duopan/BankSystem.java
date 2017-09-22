@@ -11,12 +11,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
-import javax.swing.SwingUtilities;
 import fit5042.gui.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Set;
-import javax.annotation.PostConstruct;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -36,6 +33,11 @@ public class BankSystem
     private List<TransactionType> types;
     // login user information
     private User loginUser;
+    // operated user by bank worker
+    private User currUser;
+    // handle user's transaction list
+    private List<BankTransaction> currBankTransactionList;
+    
     private int nextTransactionNo;
     private int nextUserId;
     
@@ -48,6 +50,8 @@ public class BankSystem
         userList = new ArrayList<>();
         types = new ArrayList<>();
         loginUser = new User();
+        currBankTransactionList = new ArrayList<>();
+        currUser = new User();
         reload();
     }
     
@@ -60,7 +64,7 @@ public class BankSystem
         return instance;
     }
     
-    private void reload()
+    public void reload()
     {
         try
         {
@@ -84,8 +88,7 @@ public class BankSystem
     
     // one user to handle
  //   private User currUser;
-    // handle user's transaction list
-  //  private List<BankTransaction> currBankTransactionList;
+
     
     
 //    private String transferToUser;
@@ -162,6 +165,41 @@ public class BankSystem
     {
         this.nextUserId = nextUserId;
     }
+
+    public List<BankTransaction> getCurrBankTransactionList()
+    {
+        return currBankTransactionList;
+    }
+
+    public void setCurrBankTransactionList(List<BankTransaction> currBankTransactionList)
+    {
+        this.currBankTransactionList = currBankTransactionList;
+    }
+
+    public User getCurrUser()
+    {
+        return currUser;
+    }
+
+    public void setCurrUser(User currUser)
+    {
+        this.currUser = currUser;
+    }
+    public void setCurrUserAndTrans(int id)
+    {
+        try
+        {
+            this.currUser = transactionRepository.searchUserById(id);
+            currBankTransactionList.clear();
+            for (BankTransaction bankTransaction : transactionRepository.searchTransactionsByUser(currUser))
+            {
+                currBankTransactionList.add(bankTransaction);
+            }
+        } catch (Exception ex)
+        {
+            Logger.getLogger(BankSystem.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     
     
@@ -176,9 +214,11 @@ public class BankSystem
     public void logout()
     {
         loginUser = null;
+        currUser = null;
+        currBankTransactionList.clear();
     }
 
-    // show who log in the system
+    // show who log in the system, public user main page
     public void showSelfTransaction(DefaultTableModel tableModel)
     {   
         try
@@ -196,15 +236,80 @@ public class BankSystem
         }   
     }
     
-    public void showMulSearchSelfTransaction(DefaultTableModel tableModel, ArrayList<String> array)
+    public void showCurrTransaction(DefaultTableModel tableModel)
     {   
         try
         {
-            Set<BankTransaction> temp = transactionRepository.searchTransactionsByUser(loginUser); 
-            ArrayList<BankTransaction> bts = new ArrayList<>();
-            for (BankTransaction bankTransaction : temp)
+            for (BankTransaction transaction : currBankTransactionList)
             {
-                bts.add(bankTransaction);
+                tableModel.addRow(new Object[]{transaction.getTransactionNo(),
+                    transaction.getTransactionName(),transaction.getTransactionType(),
+                    transaction.getTransactionDes(),transaction.getTransactionAmount()}); 
+            }
+        } catch (Exception ex)
+        {
+            Logger.getLogger(BankSystem.class.getName()).log(Level.SEVERE, null, ex);
+        }   
+    }
+    
+    public void showAllTransaction(DefaultTableModel tableModel)
+    {   
+        try
+        {
+            for (BankTransaction transaction : bankTransactionList)
+            {
+                tableModel.addRow(new Object[]{transaction.getTransactionNo(),
+                    transaction.getTransactionName(),transaction.getTransactionType(),
+                    transaction.getTransactionDes(),transaction.getTransactionAmount()}); 
+            }
+        } catch (Exception ex)
+        {
+            Logger.getLogger(BankSystem.class.getName()).log(Level.SEVERE, null, ex);
+        }   
+    }
+    
+    // bank worker main page
+    public void showAllUsersInfo(DefaultTableModel tableModel)
+    {   
+        try
+        {
+            for (User u : userList)
+            {
+                tableModel.addRow(new Object[]{u.getUserId(),u.getLastName(),u.getFirstName(),
+                    u.getEmail(),u.getPassword(),u.getType(),u.getAddress(),u.getPhone(),u.getBalance()});         
+            }
+        } catch (Exception ex)
+        {
+            Logger.getLogger(BankSystem.class.getName()).log(Level.SEVERE, null, ex);
+        }   
+    }
+    
+    public void showMulSearchSelfTransaction(DefaultTableModel tableModel, ArrayList<String> array, int flag)
+    {   
+        try
+        {
+            ArrayList<BankTransaction> bts = new ArrayList<>();
+            if (flag == 0)
+            {
+                Set<BankTransaction> temp = transactionRepository.searchTransactionsByUser(loginUser);             
+                for (BankTransaction bankTransaction : temp)
+                {
+                    bts.add(bankTransaction);
+                }
+            }
+            else  if (flag == 1)
+            {            
+                for (BankTransaction bankTransaction : currBankTransactionList)
+                {
+                    bts.add(bankTransaction);
+                }
+            }
+            else
+            {
+                for (BankTransaction bankTransaction : bankTransactionList)
+                {
+                    bts.add(bankTransaction);
+                }
             }
             for(int i = 0; i < array.size(); ++ i)
             {
@@ -287,11 +392,150 @@ public class BankSystem
         
     }
     
-    public void updateInfo()
+    public void showMulSearchUser(DefaultTableModel tableModel, ArrayList<String> array)
+    {   
+        try
+        {
+            ArrayList<User> users = new ArrayList<>();                      
+            for (User u : userList)
+            {
+                users.add(u);
+            }
+            for(int i = 0; i < array.size(); ++ i)
+            {
+                if (!array.get(i).equals(""))
+                {
+                    int len = users.size();
+                    switch (i)
+                    {
+                        case 0:
+                            for (int j = 0; j < len; j++)
+                            {
+                                if(!Integer.toString(users.get(j).getUserId()).contains(array.get(i)))
+                                {
+                                    users.remove(j);
+                                    --len;
+                                    --j;
+                                }
+                            }
+                            break;
+                        case 1:
+                            for (int j = 0; j < len; j++)
+                            {
+                                if(!users.get(j).getLastName().contains(array.get(i)))
+                                {
+                                    users.remove(j);
+                                    --len;
+                                    --j;
+                                }
+                            }
+                            break;
+                        case 2:
+                            for (int j = 0; j < len; j++)
+                            {
+                                if(!users.get(j).getFirstName().contains(array.get(i)))
+                                {
+                                    users.remove(j);
+                                    --len;
+                                    --j;
+                                }
+                            }
+                            break;
+                        case 3:
+                            for (int j = 0; j < len; j++)
+                            {
+                                if(!users.get(j).getEmail().contains(array.get(i)))
+                                {
+                                    users.remove(j);
+                                    --len;
+                                    --j;
+                                }
+                            }
+                            break;
+                        case 4:
+                            for (int j = 0; j < len; j++)
+                            {
+                                if(!users.get(j).getPassword().contains(array.get(i)))
+                                {
+                                    users.remove(j);
+                                    --len;
+                                    --j;
+                                }
+                            }
+                            break;
+                        case 5:
+                            for (int j = 0; j < len; j++)
+                            {
+                                if(!users.get(j).getType().contains(array.get(i)))
+                                {
+                                    users.remove(j);
+                                    --len;
+                                    --j;
+                                }
+                            }
+                            break;
+                        case 6:
+                            for (int j = 0; j < len; j++)
+                            {
+                                if(!users.get(j).getAddress().contains(array.get(i)))
+                                {
+                                    users.remove(j);
+                                    --len;
+                                    --j;
+                                }
+                            }
+                            break;
+                        case 7:
+                            for (int j = 0; j < len; j++)
+                            {
+                                if(!users.get(j).getPhone().contains(array.get(i)))
+                                {
+                                    users.remove(j);
+                                    --len;
+                                    --j;
+                                }
+                            }
+                            break;
+                        case 8:
+                            for (int j = 0; j < len; j++)
+                            {
+                                if(!Float.toString(users.get(j).getBalance()).contains(array.get(i)))
+                                {
+                                    users.remove(j);
+                                    --len;
+                                    --j;
+                                }
+                            }
+                            break;    
+                        default:
+                            break;
+                    }
+                }
+            }
+        
+            for (User u : users)
+            {
+                tableModel.addRow(new Object[]{u.getUserId(),u.getLastName(),u.getFirstName(),
+                    u.getEmail(),u.getPassword(),u.getType(),u.getAddress(),u.getPhone(),u.getBalance()}); 
+            }
+        } catch (Exception ex)
+        {
+            Logger.getLogger(BankSystem.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    public void updateInfo(int flag)
     {
         try
         {
-            transactionRepository.editUser(loginUser);
+            if (flag == 0)
+            {
+                transactionRepository.editUser(loginUser);
+            }
+            else
+            {
+                transactionRepository.editUser(currUser);
+            }
             reload();
         } catch (Exception ex)
         {
@@ -310,6 +554,18 @@ public class BankSystem
         }
     }
     
+    public void addUser(User u)
+    {
+        try
+        {
+            transactionRepository.addUser(u); 
+            userList.add(u);
+        } catch (Exception ex)
+        {
+            Logger.getLogger(BankSystem.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public void addTransaction(BankTransaction bt)
     {
         try
@@ -321,6 +577,17 @@ public class BankSystem
         }
     }
     
+    public void addTransactionType(TransactionType tt)
+    {
+        try
+        {
+            transactionRepository.addTransactionType(tt); 
+            types.add(tt);
+        } catch (Exception ex)
+        {
+            Logger.getLogger(BankSystem.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     /**
      * @param args the command line arguments
      */
